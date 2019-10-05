@@ -4,6 +4,7 @@ var mongojs = require("mongojs");
 // Require axios and cheerio. This makes the scraping possible
 var axios = require("axios");
 var cheerio = require("cheerio");
+var mongoose = require("mongoose")
 
 // Initialize Express
 var app = express();
