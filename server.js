@@ -14,6 +14,10 @@ var PORT = process.env.PORT || 8080;
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines"
+mongoose.connect(MONGODB_URI)
+
 // Hook mongojs configuration to the db variable
 var db = mongojs(databaseUrl, collections);
 db.on("error", function(error) {
@@ -23,10 +27,6 @@ db.on("error", function(error) {
 app.get("/", function(req, res) {
   res.send("Hello world");
 });
-// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines"
-
-mongoose.connect(MONGODB_URI)
 
 // Retrieve data from the db
 app.get("/all", function(req, res) {
