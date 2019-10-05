@@ -12,28 +12,33 @@ var app = express();
 var PORT = process.env.PORT || 8080;
 
 // Database configuration
-var databaseUrl = "scraper";
-var collections = ["scrapedData"];
+// var databaseUrl = "scraper";
+// var collections = ["scrapedData"];
 
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = "mongodb://dbuser:dbpassword@ds229108.mlab.com:29108/heroku_mrcbt5zx" || "mongodb://localhost/mongoHeadlines";
+var MONGODB_URI = "mongodb://dbuser:dbpassword@ds229108.mlab.com:29108/heroku_mrcbt5zx";
 
-mongoose.connect(MONGODB_URI)
+
 
 // Hook mongojs configuration to the db variable
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error) {
-  console.log("Database Error:", error);
+var db = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.connect(db, function (error) {
+  if (error) {
+    console.log("Database Error:", error);
+  } else {
+    console.log("Mongoose connection is successful")
+  }
 });
+
 // Main route (simple Hello World Message)
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.send("Hello world");
 });
 
 // Retrieve data from the db
-app.get("/all", function(req, res) {
+app.get("/all", function (req, res) {
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({}, function(error, found) {
+  db.scrapedData.find({}, function (error, found) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -46,13 +51,13 @@ app.get("/all", function(req, res) {
 });
 
 // Scrape data from one site and place it into the mongodb db
-app.get("/scrape", function(req, res) {
+app.get("/scrape", function (req, res) {
   // Make a request via axios for the news section of `ycombinator`
-  axios.get("https://news.ycombinator.com/").then(function(response) {
+  axios.get("https://news.ycombinator.com/").then(function (response) {
     // Load the html body from axios into cheerio
     var $ = cheerio.load(response.data);
     // For each element with a "title" class
-    $(".title").each(function(i, element) {
+    $(".title").each(function (i, element) {
       // Save the text and href of each link enclosed in the current element
       var title = $(element).children("a").text();
       var link = $(element).children("a").attr("href");
@@ -64,16 +69,16 @@ app.get("/scrape", function(req, res) {
           title: title,
           link: link
         },
-        function(err, inserted) {
-          if (err) {
-            // Log the error if one is encountered during the query
-            console.log(err);
-          }
-          else {
-            // Otherwise, log the inserted data
-            console.log(inserted);
-          }
-        });
+          function (err, inserted) {
+            if (err) {
+              // Log the error if one is encountered during the query
+              console.log(err);
+            }
+            else {
+              // Otherwise, log the inserted data
+              console.log(inserted);
+            }
+          });
       }
     });
   });
@@ -84,6 +89,6 @@ app.get("/scrape", function(req, res) {
 
 
 // Listen on port 3000
-app.listen(PORT, function() {
-  console.log("App running on port 8080!",PORT,PORT);
+app.listen(PORT, function () {
+  console.log("App running on port 8080!", PORT, PORT);
 });
