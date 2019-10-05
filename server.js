@@ -1,10 +1,11 @@
 // Dependencies
 var express = require("express");
+var mongoose = require("mongoose")
 var mongojs = require("mongojs");
 // Require axios and cheerio. This makes the scraping possible
 var axios = require("axios");
 var cheerio = require("cheerio");
-var mongoose = require("mongoose")
+
 
 // Initialize Express
 var app = express();
@@ -15,7 +16,8 @@ var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines"
+var MONGODB_URI = "mongodb://dbuser:dbpassword@ds229108.mlab.com:29108/heroku_mrcbt5zx" || "mongodb://localhost/mongoHeadlines";
+
 mongoose.connect(MONGODB_URI)
 
 // Hook mongojs configuration to the db variable
