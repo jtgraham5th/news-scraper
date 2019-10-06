@@ -2,6 +2,7 @@
 var express = require("express");
 var mongoose = require("mongoose");
 var logger = require("morgan");
+var path = require("path");
 // var mongojs = require("mongojs");
 // Require axios and cheerio. This makes the scraping possible
 var axios = require("axios");
@@ -19,9 +20,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
+
+var exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 // Database configuration
 // var databaseUrl = "scraper";
 // var collections = ["scrapedData"];
+app.use(express.static(path.join(__dirname, '../public')))
+app.use('/:id/articles', express.static(path.join(__dirname, 'public')));
+
+// app.use(express.static("public"));
 
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI =
@@ -36,28 +46,30 @@ mongoose.connect(db, function(error) {
     console.log("Mongoose connection is successful");
   }
 });
-
 // Main route (simple Hello World Message)
 app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.render("index");
+  // res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 // Retrieve data from the db
-app.get("/articles", function(req, res) {
+app.get("/:id/articles", function(req, res) {
   // Find all results from the scrapedData collection in the db
-  models.Article.find({})
+  models.Article.find({sport:req.params.id})
     .then(function(dbArticle) {
-      res.json(dbArticle);
+      res.render("index", { articles: dbArticle });
+      // res.json(dbArticle);
     })
     .catch(function(err) {
       res.json(err);
     });
+    
 });
 
 // Scrape data from one site and place it into the mongodb db
-app.get("/scrape", function(req, res) {
+app.get("/scrape/:id", function(req, res) {
   // Make a request via axios for the news section of `ycombinator`
-  axios.get("https://www.espn.com/nfl/").then(function(response) {
+  axios.get("https://www.espn.com/" + req.params.id + "/").then(function(response) {
     // Load the html body from axios into cheerio
     var $ = cheerio.load(response.data);
     // For each article element that has a section and  'a' class
@@ -70,6 +82,7 @@ app.get("/scrape", function(req, res) {
         .find(".contentItem__title")
         .text();
       result.link = $(this).attr("href");
+      result.sport = req.params.id
       console.log(result);
 
       models.Article.create(result)
@@ -79,10 +92,13 @@ app.get("/scrape", function(req, res) {
         .catch(function(err) {
           console.log(err);
         });
+        
     });
     // Send a "Scrape Complete" message to the browser
-    res.send("Scrape Complete");
+    
+    res.redirect("/" + req.params.id + "/articles");
   });
+   
 });
 
 // Route for grabbing a specific Article by id, populate it with it's note

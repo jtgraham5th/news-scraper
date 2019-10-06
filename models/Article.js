@@ -22,6 +22,10 @@ var ArticleSchema = new Schema({
   note: {
     type: [],
     ref: "Note"
+  },
+  sport: {
+    type: String,
+    required: true
   }
 });
 

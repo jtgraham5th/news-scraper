@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Scraping With Mongoose</title>
+  <style>
+    body {
+      background-color: #F2F6D0
+    }
+
+    #wrapper {
+      width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 5%;
+    }
+
+    #articles {
+      display: inline-block;
+      overflow: auto;
+      width: 60%;
+      height: 700px;
+    }
+
+    #notes {
+      float: right;
+      width: 30%;
+    }
+
+    textarea,
+    input {
+      display: block;
+      width: 100%;
+      background-color: #FCF5C7;
+    }
+
+    input {
+      height: 36px;
+      font-size: 24px;
+    }
+
+    textarea {
+      height: 200px;
+      font-size: 18px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+  <div id="wrapper">
+    <h1>ESPN Scraper</h1>
+    <div class="navbar">
+      <div><a href="/scrape/nfl"><button class="btn btn-success" data-name="nfl"> Scrape NFL</button></a></div>
+      <div><a href="/scrape/nba"><button class="btn btn-success" data-name="nba"> Scrape NBA</button></a></div>
+      <div><a href="/scrape/mlb"><button class="btn btn-success" data-name="mlb"> Scrape MLB</button></a></div>
+      <div><a href="/scrape/college-football"><button class="btn btn-success" data-name="college-football"> Scrape
+            College Football</button></a></div>
+      <div><a href="/scrape/soccer"><button class="btn btn-success"> Scrape Soccer</button></a></div>
+        {{{ body }}}
+      
+      
+      
+</body>
+
+</html>

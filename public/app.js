@@ -1,11 +1,14 @@
-// Grab the articles as a json
-$.getJSON("/articles", function(data) {
-  // For each one
-  for (var i = 0; i < data.length; i++) {
-    // Display the apropos information on the page
-    $("#articles").append("<p class='border h3' data-id='" + data[i]._id + "'>" + data[i].title + "<br /><a class='h6' href='https://www.espn.com" + data[i].link + "'> https://www.espn.com" + data[i].link + "</p>");
-  }
-});
+// $(".btn-success").on("click", function() {
+//   var thisSport = $(this).attr("data-name");
+//   // Grab the articles as a json
+// $.getJSON("/" + thisSport + "/articles", function(data) {
+//   // For each one
+//   for (var i = 0; i < data.length; i++) {
+//     // Display the apropos information on the page
+//     $("#articles").append("<p class='border h3' data-id='" + data[i]._id + "'>" + data[i].title + "<br /><a class='h6' href='https://www.espn.com" + data[i].link + "'> https://www.espn.com" + data[i].link + "</p>");
+//   }
+// });
+// });
 
 
 // Whenever someone clicks a p tag
@@ -14,6 +17,7 @@ $(document).on("click", "p", function() {
   $("#notes").empty();
   // Save the id from the p tag
   var thisId = $(this).attr("data-id");
+  console.log(thisId)
 
   // Now make an ajax call for the Article
   $.ajax({
