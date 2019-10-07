@@ -28,8 +28,8 @@ app.set("view engine", "handlebars");
 // Database configuration
 // var databaseUrl = "scraper";
 // var collections = ["scrapedData"];
-app.use(express.static(path.join(__dirname, '../public')))
-app.use('/:id/articles', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "../public")));
+app.use("/:id/articles", express.static(path.join(__dirname, "public")));
 
 // app.use(express.static("public"));
 
@@ -55,53 +55,57 @@ app.get("/", function(req, res) {
 // Retrieve data from the db
 app.get("/:id/articles", function(req, res) {
   // Find all results from the scrapedData collection in the db
-  models.Article.find({sport:req.params.id})
+  models.Article.find({ sport: req.params.id })
     .then(function(dbArticle) {
-      res.render("index", { 
-        articles: dbArticle,
-        sport: dbArticle[0].sport
-      });
+      if (dbArticle.length === 0) {
+        res.render("index", { sport: req.params.id });
+      } else {
+        res.render("index", {
+          articles: dbArticle,
+          sport: dbArticle[0].sport
+        });
+      }
       // res.json(dbArticle);
     })
+
     .catch(function(err) {
       res.json(err);
     });
-    
 });
 
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape/:id", function(req, res) {
   // Make a request via axios for the news section of `ycombinator`
-  axios.get("https://www.espn.com/" + req.params.id + "/").then(function(response) {
-    // Load the html body from axios into cheerio
-    var $ = cheerio.load(response.data);
-    // For each article element that has a section and  'a' class
-    $("article section a").each(function(i, element) {
-      // console.log(i);
-      // console.log(element);
-      var result = {};
+  axios
+    .get("https://www.espn.com/" + req.params.id + "/")
+    .then(function(response) {
+      // Load the html body from axios into cheerio
+      var $ = cheerio.load(response.data);
+      // For each article element that has a section and  'a' class
+      $("article section a").each(function(i, element) {
+        // console.log(i);
+        // console.log(element);
+        var result = {};
 
-      result.title = $(this)
-        .find(".contentItem__title")
-        .text();
-      result.link = $(this).attr("href");
-      result.sport = req.params.id
-      console.log(result);
+        result.title = $(this)
+          .find(".contentItem__title")
+          .text();
+        result.link = $(this).attr("href");
+        result.sport = req.params.id;
+        console.log(result);
 
-      models.Article.create(result)
-        .then(function(dbArticle) {
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-        
+        models.Article.create(result)
+          .then(function(dbArticle) {
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      });
+      // Send a "Scrape Complete" message to the browser
+
+      res.redirect("/" + req.params.id + "/articles");
     });
-    // Send a "Scrape Complete" message to the browser
-    
-    res.redirect("/" + req.params.id + "/articles");
-  });
-   
 });
 
 // Route for grabbing a specific Article by id, populate it with it's note
@@ -128,7 +132,11 @@ app.post("/articles/:id", function(req, res) {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return models.Article.findOneAndUpdate({ _id: req.params.id }, {$push: {note: dbNote }}, { new: true });
+      return models.Article.findOneAndUpdate(
+        { _id: req.params.id },
+        { $push: { note: dbNote } },
+        { new: true }
+      );
     })
     .then(function(dbArticle) {
       // If we were able to successfully update an Article, send it back to the client
