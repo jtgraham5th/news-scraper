@@ -57,7 +57,10 @@ app.get("/:id/articles", function(req, res) {
   // Find all results from the scrapedData collection in the db
   models.Article.find({sport:req.params.id})
     .then(function(dbArticle) {
-      res.render("index", { articles: dbArticle });
+      res.render("index", { 
+        articles: dbArticle,
+        sport: dbArticle[0].sport
+      });
       // res.json(dbArticle);
     })
     .catch(function(err) {

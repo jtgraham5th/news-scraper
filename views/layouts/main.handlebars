@@ -50,19 +50,23 @@
 </head>
 
 <body>
-  <div id="wrapper">
-    <h1>ESPN Scraper</h1>
-    <div class="navbar">
-      <div><a href="/scrape/nfl"><button class="btn btn-success" data-name="nfl"> Scrape NFL</button></a></div>
-      <div><a href="/scrape/nba"><button class="btn btn-success" data-name="nba"> Scrape NBA</button></a></div>
-      <div><a href="/scrape/mlb"><button class="btn btn-success" data-name="mlb"> Scrape MLB</button></a></div>
-      <div><a href="/scrape/college-football"><button class="btn btn-success" data-name="college-football"> Scrape
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+    <a class="navbar-brand" href="/"><h1>ESPN Scraper</h1></a>
+    <div class="container">
+      <div class="navbar-nav h4">
+        <div><a href="/nfl/articles" class="nav-item nav-link" data-name="nfl"> NFL</button></a></div>
+        <div><a href="/nba/articles" class="nav-item nav-link" data-name="nba"> NBA</button></a></div>
+        <div><a href="/mlb/articles" class="nav-item nav-link" data-name="mlb"> MLB</button></a></div>
+        <div><a href="/college-football/articles" class="nav-item nav-link" data-name="college-football">
             College Football</button></a></div>
-      <div><a href="/scrape/soccer"><button class="btn btn-success"> Scrape Soccer</button></a></div>
-        {{{ body }}}
-      
-      
-      
+        <div><a href="/soccer/articles" class="nav-item nav-link"> Soccer</button></a></div>
+      </div>
+    </div>
+  </nav>
+    {{{ body }}}
+
+
+
 </body>
 
 </html>
